@@ -1,0 +1,12 @@
+/_build/
+/deps/
+/doc/
+/apps/*/_build/
+/apps/*/deps/
+/apps/*/doc/
+*.ez
+*.beam
+erl_crash.dump
+.DS_Store
+.coverdata
+/cover/
