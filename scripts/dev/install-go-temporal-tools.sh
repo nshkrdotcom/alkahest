@@ -8,6 +8,7 @@ command -v protoc >/dev/null || { echo "protoc is required" >&2; exit 1; }
 
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+mix escript.install hex protobuf 0.16.0 --force
 
 (
   cd "$ROOT/services/temporal_gateway"

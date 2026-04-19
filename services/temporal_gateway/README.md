@@ -17,6 +17,8 @@ It is intentionally separate from Elixir:
 go test ./...
 ```
 
+`gen-proto.sh` regenerates both this service's Go bindings and the Elixir contract modules in `apps/alkahest_contracts`.
+
 ## Run locally
 
 Start Temporal:
@@ -35,4 +37,10 @@ Start the sample worker:
 
 ```bash
 go run ./cmd/alkahest-temporal-worker
+```
+
+Or run the complete local live example from the repository root:
+
+```bash
+examples/run_all.sh
 ```

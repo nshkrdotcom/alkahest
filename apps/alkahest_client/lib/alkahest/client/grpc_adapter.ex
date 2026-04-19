@@ -2,6 +2,7 @@ defmodule Alkahest.Client.GRPCAdapter do
   @moduledoc "gRPC adapter for the Alkahest gateway service."
   @behaviour Alkahest.Client.Adapter
 
+  alias Alkahest.Client.GRPCSupervisor
   alias Alkahest.Proto.Workflow.V1.WorkflowRuntimeGateway.Stub
 
   @impl true
@@ -30,10 +31,15 @@ defmodule Alkahest.Client.GRPCAdapter do
   end
 
   defp connect(opts) do
-    opts
-    |> Keyword.fetch(:endpoint)
-    |> case do
-      {:ok, endpoint} -> GRPC.Stub.connect(endpoint, channel_opts(opts))
+    with {:ok, endpoint} <- fetch_endpoint(opts),
+         {:ok, _pid} <- GRPCSupervisor.ensure_started() do
+      GRPC.Stub.connect(endpoint, channel_opts(opts))
+    end
+  end
+
+  defp fetch_endpoint(opts) do
+    case Keyword.fetch(opts, :endpoint) do
+      {:ok, endpoint} -> {:ok, endpoint}
       :error -> {:error, :missing_gateway_endpoint}
     end
   end

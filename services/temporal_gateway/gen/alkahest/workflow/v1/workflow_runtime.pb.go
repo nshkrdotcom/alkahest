@@ -7,6 +7,7 @@
 package workflowv1
 
 import (
+	_ "github.com/nshkrdotcom/alkahest/services/temporal_gateway/gen"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1005,7 +1006,7 @@ var File_alkahest_workflow_v1_workflow_runtime_proto protoreflect.FileDescriptor
 
 const file_alkahest_workflow_v1_workflow_runtime_proto_rawDesc = "" +
 	"\n" +
-	"+alkahest/workflow/v1/workflow_runtime.proto\x12\x14alkahest.workflow.v1\"7\n" +
+	"+alkahest/workflow/v1/workflow_runtime.proto\x12\x14alkahest.workflow.v1\x1a\x0eelixirpb.proto\"7\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\"c\n" +
@@ -1091,7 +1092,8 @@ const file_alkahest_workflow_v1_workflow_runtime_proto_rawDesc = "" +
 	"\rQueryWorkflow\x12*.alkahest.workflow.v1.QueryWorkflowRequest\x1a+.alkahest.workflow.v1.QueryWorkflowResponse\x12k\n" +
 	"\x0eCancelWorkflow\x12+.alkahest.workflow.v1.CancelWorkflowRequest\x1a,.alkahest.workflow.v1.CancelWorkflowResponse\x12q\n" +
 	"\x10DescribeWorkflow\x12-.alkahest.workflow.v1.DescribeWorkflowRequest\x1a..alkahest.workflow.v1.DescribeWorkflowResponse\x12\x86\x01\n" +
-	"\x17FetchWorkflowHistoryRef\x124.alkahest.workflow.v1.FetchWorkflowHistoryRefRequest\x1a5.alkahest.workflow.v1.FetchWorkflowHistoryRefResponseB_Z]github.com/nshkrdotcom/alkahest/services/temporal_gateway/gen/alkahest/workflow/v1;workflowv1b\x06proto3"
+	"\x17FetchWorkflowHistoryRef\x124.alkahest.workflow.v1.FetchWorkflowHistoryRefRequest\x1a5.alkahest.workflow.v1.FetchWorkflowHistoryRefResponseB~\xbaA\x1c\n" +
+	"\x1aAlkahest.Proto.Workflow.V1Z]github.com/nshkrdotcom/alkahest/services/temporal_gateway/gen/alkahest/workflow/v1;workflowv1b\x06proto3"
 
 var (
 	file_alkahest_workflow_v1_workflow_runtime_proto_rawDescOnce sync.Once

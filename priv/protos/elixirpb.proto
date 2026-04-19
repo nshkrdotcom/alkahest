@@ -1,0 +1,17 @@
+// Put this file under PROTO_PATH before importing it from Elixir-generated protos.
+// 1047 is allocated to elixir-protobuf by Protocol Buffers.
+
+syntax = "proto2";
+
+package elixirpb;
+
+import "google/protobuf/descriptor.proto";
+
+message FileOptions {
+  optional string module_prefix = 1;
+}
+
+extend google.protobuf.FileOptions {
+  optional FileOptions file = 1047;
+}
+

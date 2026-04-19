@@ -2,7 +2,10 @@ syntax = "proto3";
 
 package alkahest.workflow.v1;
 
+import "elixirpb.proto";
+
 option go_package = "github.com/nshkrdotcom/alkahest/services/temporal_gateway/gen/alkahest/workflow/v1;workflowv1";
+option (elixirpb.file).module_prefix = "Alkahest.Proto.Workflow.V1";
 
 message MetadataEntry {
   string key = 1;
