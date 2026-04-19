@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package alkahest.workflow.v1;
+
+option go_package = "github.com/nshkrdotcom/alkahest/services/temporal_gateway/gen/alkahest/workflow/v1;workflowv1";
+
+message MetadataEntry {
+  string key = 1;
+  string value = 2;
+}
+
+message WorkflowRef {
+  string namespace = 1;
+  string workflow_id = 2;
+  string run_id = 3;
+}
+
+message WorkflowError {
+  string code = 1;
+  string message = 2;
+  bool retryable = 3;
+}
+
+message StartWorkflowRequest {
+  string namespace = 1;
+  string workflow_id = 2;
+  string workflow_type = 3;
+  string task_queue = 4;
+  string input_json = 5;
+  repeated MetadataEntry metadata = 6;
+  string idempotency_key = 7;
+  string trace_id = 8;
+}
+
+message StartWorkflowResponse {
+  WorkflowRef ref = 1;
+  string status = 2;
+  WorkflowError error = 3;
+}
+
+message SignalWorkflowRequest {
+  WorkflowRef ref = 1;
+  string signal_name = 2;
+  string payload_json = 3;
+  repeated MetadataEntry metadata = 4;
+  string idempotency_key = 5;
+  string trace_id = 6;
+}
+
+message SignalWorkflowResponse {
+  WorkflowRef ref = 1;
+  string status = 2;
+  WorkflowError error = 3;
+}
+
+message QueryWorkflowRequest {
+  WorkflowRef ref = 1;
+  string query_name = 2;
+  string payload_json = 3;
+  repeated MetadataEntry metadata = 4;
+  string trace_id = 5;
+}
+
+message QueryWorkflowResponse {
+  WorkflowRef ref = 1;
+  string result_json = 2;
+  WorkflowError error = 3;
+}
+
+message CancelWorkflowRequest {
+  WorkflowRef ref = 1;
+  string reason = 2;
+  repeated MetadataEntry metadata = 3;
+  string trace_id = 4;
+}
+
+message CancelWorkflowResponse {
+  WorkflowRef ref = 1;
+  string status = 2;
+  WorkflowError error = 3;
+}
+
+message DescribeWorkflowRequest {
+  WorkflowRef ref = 1;
+  string trace_id = 2;
+}
+
+message DescribeWorkflowResponse {
+  WorkflowRef ref = 1;
+  string status = 2;
+  string task_queue = 3;
+  repeated MetadataEntry metadata = 4;
+  WorkflowError error = 5;
+}
+
+message FetchWorkflowHistoryRefRequest {
+  WorkflowRef ref = 1;
+  string trace_id = 2;
+}
+
+message FetchWorkflowHistoryRefResponse {
+  WorkflowRef ref = 1;
+  string history_uri = 2;
+  WorkflowError error = 3;
+}
+
+service WorkflowRuntimeGateway {
+  rpc StartWorkflow(StartWorkflowRequest) returns (StartWorkflowResponse);
+  rpc SignalWorkflow(SignalWorkflowRequest) returns (SignalWorkflowResponse);
+  rpc QueryWorkflow(QueryWorkflowRequest) returns (QueryWorkflowResponse);
+  rpc CancelWorkflow(CancelWorkflowRequest) returns (CancelWorkflowResponse);
+  rpc DescribeWorkflow(DescribeWorkflowRequest) returns (DescribeWorkflowResponse);
+  rpc FetchWorkflowHistoryRef(FetchWorkflowHistoryRefRequest) returns (FetchWorkflowHistoryRefResponse);
+}

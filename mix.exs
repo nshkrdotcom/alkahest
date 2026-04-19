@@ -1,0 +1,166 @@
+defmodule Alkahest.Workspace.MixProject do
+  use Mix.Project
+
+  @version "0.1.0"
+  @source_url "https://github.com/nshkrdotcom/alkahest"
+  @workspace_packages [
+    alkahest_contracts: "apps/alkahest_contracts",
+    alkahest_client: "apps/alkahest_client",
+    alkahest_test_support: "apps/alkahest_test_support"
+  ]
+
+  def project do
+    [
+      app: :alkahest_workspace,
+      version: @version,
+      elixir: "~> 1.18",
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      aliases: aliases(),
+      blitz_workspace: blitz_workspace(),
+      docs: docs(),
+      description: description(),
+      dialyzer: dialyzer(),
+      name: "Alkahest Workspace",
+      source_url: @source_url,
+      homepage_url: @source_url
+    ]
+  end
+
+  def application do
+    [extra_applications: [:logger]]
+  end
+
+  defp deps do
+    [
+      {:blitz, "~> 0.1.0", runtime: false},
+      workspace_package_deps(),
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false}
+    ]
+    |> List.flatten()
+  end
+
+  defp aliases do
+    monorepo_aliases = [
+      "monorepo.deps.get": ["blitz.workspace deps_get"],
+      "monorepo.format": ["blitz.workspace format"],
+      "monorepo.compile": ["blitz.workspace compile"],
+      "monorepo.test": ["blitz.workspace test"],
+      "monorepo.credo": ["blitz.workspace credo"],
+      "monorepo.dialyzer": ["compile", "dialyzer --force-check"],
+      "monorepo.docs": ["blitz.workspace docs"],
+      "go.fmt.check": ["cmd scripts/dev/check-go-format.sh"],
+      "go.test": ["cmd --cd services/temporal_gateway go test ./..."]
+    ]
+
+    mr_aliases =
+      ~w[deps.get format compile test credo dialyzer docs]
+      |> Enum.map(fn task -> {:"mr.#{task}", ["monorepo.#{task}"]} end)
+
+    [
+      ci: [
+        "monorepo.deps.get",
+        "monorepo.format --check-formatted",
+        "monorepo.compile",
+        "monorepo.test",
+        "monorepo.credo --strict",
+        "monorepo.dialyzer",
+        "monorepo.docs",
+        "go.fmt.check",
+        "go.test"
+      ],
+      quality: ["monorepo.credo --strict", "monorepo.dialyzer", "go.fmt.check"],
+      "docs.all": ["monorepo.docs"]
+    ] ++ monorepo_aliases ++ mr_aliases
+  end
+
+  defp description do
+    "Reusable Temporal facade workspace for Elixir clients, gRPC contracts, and official-SDK gateway integration."
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      name: "Alkahest Workspace",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      homepage_url: @source_url,
+      assets: %{"assets" => "assets"},
+      logo: "assets/alkahest.svg",
+      extras: [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "guides/getting-started.md",
+        "guides/architecture.md",
+        "guides/go-temporal-setup.md"
+      ],
+      groups_for_extras: [
+        Project: ["README.md", "CHANGELOG.md", "LICENSE"],
+        Guides: [
+          "guides/getting-started.md",
+          "guides/architecture.md",
+          "guides/go-temporal-setup.md"
+        ]
+      ],
+      groups_for_modules: [
+        Contracts: [Alkahest.Contracts, ~r/^Alkahest\.Contracts\./, ~r/^Alkahest\.Proto\./],
+        Client: [~r/^Alkahest\.Client/],
+        "Test Support": [~r/^Alkahest\.TestSupport/]
+      ]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_deps: :app_tree,
+      plt_add_apps: [:mix, :blitz],
+      plt_core_path: "_build/plts/core",
+      paths: workspace_dialyzer_paths()
+    ]
+  end
+
+  defp workspace_package_deps do
+    Enum.map(@workspace_packages, fn {app, path} -> {app, path: path} end)
+  end
+
+  defp workspace_dialyzer_paths do
+    build_path = Path.join("_build", to_string(Mix.env()))
+
+    [Path.join([build_path, "lib", "alkahest_workspace", "ebin"])] ++
+      Enum.map(@workspace_packages, fn {app, _path} ->
+        Path.join([build_path, "lib", Atom.to_string(app), "ebin"])
+      end)
+  end
+
+  defp blitz_workspace do
+    [
+      root: __DIR__,
+      projects: [".", "apps/*"],
+      isolation: [
+        deps_path: true,
+        build_path: true,
+        lockfile: true,
+        hex_home: "_build/hex",
+        unset_env: ["HEX_API_KEY"]
+      ],
+      parallelism: [
+        env: "ALKAHEST_MONOREPO_MAX_CONCURRENCY",
+        multiplier: :auto,
+        base: [deps_get: 3, format: 4, compile: 2, test: 2, credo: 2, dialyzer: 1, docs: 1],
+        overrides: []
+      ],
+      tasks: [
+        deps_get: [args: ["deps.get"], preflight?: false],
+        format: [args: ["format"]],
+        compile: [args: ["compile", "--warnings-as-errors"]],
+        test: [args: ["test"], mix_env: "test", color: true],
+        credo: [args: ["credo"]],
+        dialyzer: [args: ["dialyzer", "--force-check"]],
+        docs: [args: ["docs"]]
+      ]
+    ]
+  end
+end

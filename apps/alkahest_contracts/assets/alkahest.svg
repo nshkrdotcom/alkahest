@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" role="img" aria-labelledby="title desc">
+  <title id="title">Alkahest</title>
+  <desc id="desc">A luminous symmetric hexagonal mark with layered circuit and alchemical geometry.</desc>
+  <defs>
+    <linearGradient id="edge" x1="30" y1="30" x2="170" y2="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6fffe9"/>
+      <stop offset="0.45" stop-color="#3a86ff"/>
+      <stop offset="1" stop-color="#ffbe0b"/>
+    </linearGradient>
+    <radialGradient id="core" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="0.22" stop-color="#b9fff4" stop-opacity="0.9"/>
+      <stop offset="0.55" stop-color="#13315c" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#07111f"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.2" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.10 0 0 0 0 0.85 0 0 0 0 0.95 0 0 0 0.72 0" result="aura"/>
+      <feMerge>
+        <feMergeNode in="aura"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="hexClip">
+      <path d="M100 10 177.94 55v90L100 190 22.06 145V55Z"/>
+    </clipPath>
+    <pattern id="grid" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(30 100 100)">
+      <path d="M14 0H0v14" fill="none" stroke="#8bd3dd" stroke-opacity="0.13" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <g clip-path="url(#hexClip)">
+    <path d="M100 10 177.94 55v90L100 190 22.06 145V55Z" fill="url(#core)"/>
+    <path d="M0 0h200v200H0z" fill="url(#grid)"/>
+    <g opacity="0.72" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M100 31v38M100 131v38M40.4 65.5l32.9 19M126.7 115.5l32.9 19M159.6 65.5l-32.9 19M73.3 115.5l-32.9 19" stroke="#6fffe9" stroke-width="3"/>
+      <path d="M100 48 145 74v52l-45 26-45-26V74Z" stroke="#ffbe0b" stroke-opacity="0.78" stroke-width="2"/>
+      <path d="M100 67 128.58 83.5v33L100 133l-28.58-16.5v-33Z" stroke="#d8f3dc" stroke-opacity="0.82" stroke-width="2"/>
+      <path d="M72 84h56M72 116h56M100 68l28 48M100 132 72 84" stroke="#8ecae6" stroke-opacity="0.45" stroke-width="1.4"/>
+    </g>
+    <g filter="url(#glow)">
+      <circle cx="100" cy="100" r="18" fill="#07111f" stroke="#6fffe9" stroke-width="3"/>
+      <path d="M91 101.5 98.5 109 111 90" fill="none" stroke="#ffbe0b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g fill="#6fffe9">
+      <circle cx="100" cy="31" r="4"/><circle cx="100" cy="169" r="4"/>
+      <circle cx="40.4" cy="65.5" r="4"/><circle cx="159.6" cy="65.5" r="4"/>
+      <circle cx="40.4" cy="134.5" r="4"/><circle cx="159.6" cy="134.5" r="4"/>
+    </g>
+    <path d="M100 10 177.94 55v90L100 190 22.06 145V55Z" fill="none" stroke="#ffffff" stroke-opacity="0.24" stroke-width="6"/>
+  </g>
+  <path d="M100 10 177.94 55v90L100 190 22.06 145V55Z" fill="none" stroke="url(#edge)" stroke-width="5" filter="url(#glow)"/>
+  <path d="M100 18 171.01 59v82L100 182 28.99 141V59Z" fill="none" stroke="#001219" stroke-opacity="0.82" stroke-width="2"/>
+</svg>
