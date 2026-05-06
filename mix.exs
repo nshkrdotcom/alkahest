@@ -33,7 +33,7 @@ defmodule Alkahest.Workspace.MixProject do
 
   defp deps do
     [
-      {:blitz, "~> 0.1.0", runtime: false},
+      {:blitz, "~> 0.3.0", runtime: false},
       workspace_package_deps(),
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
@@ -44,13 +44,13 @@ defmodule Alkahest.Workspace.MixProject do
 
   defp aliases do
     monorepo_aliases = [
-      "monorepo.deps.get": ["blitz.workspace deps_get"],
-      "monorepo.format": ["blitz.workspace format"],
-      "monorepo.compile": ["blitz.workspace compile"],
-      "monorepo.test": ["blitz.workspace test"],
-      "monorepo.credo": ["blitz.workspace credo"],
+      "monorepo.deps.get": ["blitz.workspace.impact deps_get --"],
+      "monorepo.format": ["blitz.workspace.impact format --"],
+      "monorepo.compile": ["blitz.workspace.impact compile --"],
+      "monorepo.test": ["blitz.workspace.impact test --"],
+      "monorepo.credo": ["blitz.workspace.impact credo --"],
       "monorepo.dialyzer": ["compile", "dialyzer --force-check"],
-      "monorepo.docs": ["blitz.workspace docs"],
+      "monorepo.docs": ["blitz.workspace.impact docs --"],
       "go.fmt.check": ["cmd scripts/dev/check-go-format.sh"],
       "go.test": ["cmd --cd services/temporal_gateway go test ./..."]
     ]

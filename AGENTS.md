@@ -21,3 +21,7 @@ Development commands:
 - `just ci`
 - `scripts/dev/install-go-temporal-tools.sh`
 - `scripts/dev/gen-proto.sh`
+
+## Blitz 0.3.0 operational note
+
+Root workspace Blitz uses published Hex `~> 0.3.0` by default; `.blitz/` is committed compact impact state after green QC. Source and `mix.exs` changes cascade through reverse workspace dependencies; docs-only changes should stay owner-local.
