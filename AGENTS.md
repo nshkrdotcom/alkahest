@@ -13,6 +13,30 @@ Rules:
 - Workers must call approved system APIs or repo-owned command surfaces for side effects, not arbitrary application tables.
 - Run `mix ci` before committing Elixir changes.
 - Run `scripts/dev/check-go-format.sh` and `go test ./...` in `services/temporal_gateway` before gateway changes.
+- Alkahest is not in the Weld consumer set. Do not add a Weld dependency, Weld
+  task, or Weld Credo check as part of Phase 2 cleanup.
+
+## Dependency Sources
+
+- Cross-repo dependency selection belongs in
+  `build_support/dependency_sources.config.exs` and is consumed through the
+  canonical `build_support/dependency_sources.exs` helper.
+- App packages that need self-contained package-mode dependency selection keep
+  their own canonical `apps/*/build_support/dependency_sources.*` files.
+- Machine-local dependency overrides belong in `.dependency_sources.local.exs`
+  or the relevant `apps/*/.dependency_sources.local.exs`. Keep those files
+  untracked.
+- Dependency source selection must not read environment variables.
+
+## Runtime Environment
+
+- Runtime application code under `lib/**` and Elixir examples must not call
+  direct OS environment APIs such as `System.get_env/1`,
+  `System.fetch_env/1`, `System.fetch_env!/1`, `System.put_env/2`,
+  `System.delete_env/1`, or `System.get_env/0`.
+- Deployment environment reads belong at OTP boot boundaries such as
+  `config/runtime.exs` or a `Config.Provider`. Runtime modules and examples
+  should receive explicit options or materialized application config.
 
 Development commands:
 

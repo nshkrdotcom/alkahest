@@ -1,3 +1,7 @@
+unless Code.ensure_loaded?(DependencySources) do
+  Code.require_file("build_support/dependency_sources.exs", __DIR__)
+end
+
 defmodule Alkahest.Workspace.MixProject do
   use Mix.Project
 
@@ -123,7 +127,7 @@ defmodule Alkahest.Workspace.MixProject do
   end
 
   defp workspace_package_deps do
-    Enum.map(@workspace_packages, fn {app, path} -> {app, path: path} end)
+    Enum.map(@workspace_packages, fn {app, _path} -> DependencySources.dep(app, __DIR__) end)
   end
 
   defp workspace_dialyzer_paths do
@@ -147,7 +151,6 @@ defmodule Alkahest.Workspace.MixProject do
         unset_env: ["HEX_API_KEY"]
       ],
       parallelism: [
-        env: "ALKAHEST_MONOREPO_MAX_CONCURRENCY",
         multiplier: :auto,
         base: [deps_get: 3, format: 4, compile: 2, test: 2, credo: 2, dialyzer: 1, docs: 1],
         overrides: []

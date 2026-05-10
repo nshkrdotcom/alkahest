@@ -9,6 +9,8 @@ TEMPORAL_NAMESPACE="${TEMPORAL_NAMESPACE:-default}"
 TEMPORAL_UI_PORT="${TEMPORAL_UI_PORT:-8233}"
 ALKAHEST_GATEWAY_ENDPOINT="${ALKAHEST_GATEWAY_ENDPOINT:-127.0.0.1:9090}"
 ALKAHEST_TASK_QUEUE="${ALKAHEST_TASK_QUEUE:-alkahest.dev}"
+ALKAHEST_WORKFLOW_TYPE="${ALKAHEST_WORKFLOW_TYPE:-ExecutionLifecycleWorkflow}"
+ALKAHEST_EXAMPLE_TIMEOUT_MS="${ALKAHEST_EXAMPLE_TIMEOUT_MS:-15000}"
 
 STARTED_PIDS=()
 
@@ -162,10 +164,12 @@ wait_for_log "Alkahest sample worker" "Started Worker" "$worker_log"
 
 (
   cd "$ROOT"
-  env TEMPORAL_NAMESPACE="$TEMPORAL_NAMESPACE" \
-    ALKAHEST_GATEWAY_ENDPOINT="$ALKAHEST_GATEWAY_ENDPOINT" \
-    ALKAHEST_TASK_QUEUE="$ALKAHEST_TASK_QUEUE" \
-    mix run examples/elixir_client_smoke.exs
+  mix run examples/elixir_client_smoke.exs -- \
+    --namespace "$TEMPORAL_NAMESPACE" \
+    --endpoint "$ALKAHEST_GATEWAY_ENDPOINT" \
+    --task-queue "$ALKAHEST_TASK_QUEUE" \
+    --workflow-type "$ALKAHEST_WORKFLOW_TYPE" \
+    --timeout-ms "$ALKAHEST_EXAMPLE_TIMEOUT_MS"
 )
 
 echo "Alkahest live example completed successfully."

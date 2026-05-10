@@ -53,17 +53,28 @@ Alkahest live example completed successfully.
 
 ## Configuration
 
-Environment variables:
+`examples/run_all.sh` uses these process-launch environment variables:
 
 - `TEMPORAL_ADDRESS`, default `127.0.0.1:7233`
 - `TEMPORAL_NAMESPACE`, default `default`
 - `TEMPORAL_UI_PORT`, default `8233`
 - `ALKAHEST_GATEWAY_ENDPOINT`, default `127.0.0.1:9090`
 - `ALKAHEST_TASK_QUEUE`, default `alkahest.dev`
+- `ALKAHEST_WORKFLOW_TYPE`, default `ExecutionLifecycleWorkflow`
 - `ALKAHEST_EXAMPLE_TIMEOUT_MS`, default `15000`
 - `ALKAHEST_EXAMPLE_LOG_DIR`, default temporary directory
+
+The Elixir smoke itself takes explicit flags:
+
+```bash
+mix run examples/elixir_client_smoke.exs -- \
+  --namespace default \
+  --endpoint 127.0.0.1:9090 \
+  --task-queue alkahest.dev \
+  --workflow-type ExecutionLifecycleWorkflow \
+  --timeout-ms 15000
+```
 
 ## Supervisor Behavior
 
 `Alkahest.Client` starts `GRPC.Client.Supervisor` automatically before opening a gRPC channel. Downstream applications can still put `{GRPC.Client.Supervisor, []}` in their own supervision tree when they want explicit ownership.
-

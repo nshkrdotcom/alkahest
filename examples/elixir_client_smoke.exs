@@ -7,14 +7,20 @@ defmodule Alkahest.Examples.ElixirClientSmoke do
   alias Alkahest.Proto.Workflow.V1.StartWorkflowRequest
 
   @poll_interval_ms 500
+  @default_endpoint "127.0.0.1:9090"
+  @default_namespace "default"
+  @default_task_queue "alkahest.dev"
+  @default_workflow_type "ExecutionLifecycleWorkflow"
+  @default_timeout_ms 15_000
 
-  def run do
-    endpoint = env("ALKAHEST_GATEWAY_ENDPOINT", "127.0.0.1:9090")
-    namespace = env("TEMPORAL_NAMESPACE", "default")
-    task_queue = env("ALKAHEST_TASK_QUEUE", "alkahest.dev")
-    workflow_type = env("ALKAHEST_WORKFLOW_TYPE", "ExecutionLifecycleWorkflow")
+  def run(argv \\ System.argv()) do
+    config = config!(argv)
+    endpoint = config[:endpoint]
+    namespace = config[:namespace]
+    task_queue = config[:task_queue]
+    workflow_type = config[:workflow_type]
     workflow_id = "alkahest-example-#{System.unique_integer([:positive])}"
-    timeout_ms = env_int("ALKAHEST_EXAMPLE_TIMEOUT_MS", 15_000)
+    timeout_ms = config[:timeout_ms]
 
     opts = [endpoint: endpoint, rpc_opts: [timeout: timeout_ms]]
 
@@ -45,7 +51,9 @@ defmodule Alkahest.Examples.ElixirClientSmoke do
       |> unwrap!("FetchWorkflowHistoryRef")
 
     unless String.starts_with?(history_response.history_uri, "temporal://") do
-      abort!("FetchWorkflowHistoryRef returned invalid URI #{inspect(history_response.history_uri)}")
+      abort!(
+        "FetchWorkflowHistoryRef returned invalid URI #{inspect(history_response.history_uri)}"
+      )
     end
 
     print("history ref #{history_response.history_uri}")
@@ -82,12 +90,36 @@ defmodule Alkahest.Examples.ElixirClientSmoke do
 
   defp monotonic_deadline(timeout_ms), do: System.monotonic_time(:millisecond) + timeout_ms
 
-  defp env(name, fallback), do: System.get_env(name, fallback)
+  defp config!(argv) do
+    {opts, rest, invalid} =
+      OptionParser.parse(argv,
+        strict: [
+          endpoint: :string,
+          namespace: :string,
+          task_queue: :string,
+          workflow_type: :string,
+          timeout_ms: :integer
+        ]
+      )
 
-  defp env_int(name, fallback) do
-    case Integer.parse(env(name, Integer.to_string(fallback))) do
-      {value, ""} when value > 0 -> value
-      _other -> fallback
+    case {rest, invalid} do
+      {[], []} ->
+        timeout_ms = Keyword.get(opts, :timeout_ms, @default_timeout_ms)
+
+        if timeout_ms <= 0 do
+          abort!("--timeout-ms must be greater than 0")
+        end
+
+        [
+          endpoint: Keyword.get(opts, :endpoint, @default_endpoint),
+          namespace: Keyword.get(opts, :namespace, @default_namespace),
+          task_queue: Keyword.get(opts, :task_queue, @default_task_queue),
+          workflow_type: Keyword.get(opts, :workflow_type, @default_workflow_type),
+          timeout_ms: timeout_ms
+        ]
+
+      {_, _} ->
+        abort!("unsupported arguments: #{inspect(rest ++ Enum.map(invalid, &elem(&1, 0)))}")
     end
   end
 
@@ -100,4 +132,3 @@ defmodule Alkahest.Examples.ElixirClientSmoke do
 end
 
 Alkahest.Examples.ElixirClientSmoke.run()
-

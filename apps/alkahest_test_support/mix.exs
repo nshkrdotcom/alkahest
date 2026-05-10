@@ -1,3 +1,7 @@
+unless Code.ensure_loaded?(DependencySources) do
+  Code.require_file("build_support/dependency_sources.exs", __DIR__)
+end
+
 defmodule Alkahest.TestSupport.MixProject do
   use Mix.Project
 
@@ -30,8 +34,8 @@ defmodule Alkahest.TestSupport.MixProject do
 
   defp deps do
     [
-      {:alkahest_contracts, path: "../alkahest_contracts"},
-      {:alkahest_client, path: "../alkahest_client"},
+      DependencySources.dep(:alkahest_contracts, __DIR__),
+      DependencySources.dep(:alkahest_client, __DIR__),
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false}
@@ -60,7 +64,7 @@ defmodule Alkahest.TestSupport.MixProject do
     [
       name: "alkahest_test_support",
       description: description(),
-      files: ~w(lib assets mix.exs README.md CHANGELOG.md LICENSE),
+      files: ~w(lib assets build_support mix.exs README.md CHANGELOG.md LICENSE),
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url},
       maintainers: ["nshkrdotcom"]
