@@ -1,6 +1,4 @@
-unless Code.ensure_loaded?(DependencySources) do
-  Code.require_file("build_support/dependency_sources.exs", __DIR__)
-end
+if bootstrap = System.get_env("MIX_WORKSPACE_OPS_BOOTSTRAP"), do: Code.require_file(bootstrap)
 
 defmodule Alkahest.Client.MixProject do
   use Mix.Project
@@ -34,12 +32,18 @@ defmodule Alkahest.Client.MixProject do
 
   defp deps do
     [
-      DependencySources.dep(:alkahest_contracts, __DIR__),
+      workspace_dep({:alkahest_contracts, "~> 0.1.0"}),
       {:grpc, "~> 0.11.5"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false}
     ]
+  end
+
+  defp workspace_dep(committed) do
+    if function_exported?(MixWorkspaceOpsBootstrap, :dep, 2),
+      do: apply(MixWorkspaceOpsBootstrap, :dep, [committed, __DIR__]),
+      else: committed
   end
 
   defp description do
@@ -64,7 +68,7 @@ defmodule Alkahest.Client.MixProject do
     [
       name: "alkahest_client",
       description: description(),
-      files: ~w(lib assets build_support mix.exs README.md CHANGELOG.md LICENSE),
+      files: ~w(lib assets mix.exs README.md CHANGELOG.md LICENSE),
       licenses: ["MIT"],
       links: %{"GitHub" => @source_url},
       maintainers: ["nshkrdotcom"]

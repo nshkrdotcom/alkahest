@@ -18,14 +18,11 @@ Rules:
 
 ## Dependency Sources
 
-- Cross-repo dependency selection belongs in
-  `build_support/dependency_sources.config.exs` and is consumed through the
-  canonical `build_support/dependency_sources.exs` helper.
-- App packages that need self-contained package-mode dependency selection keep
-  their own canonical `apps/*/build_support/dependency_sources.*` files.
-- Machine-local dependency overrides belong in `.dependency_sources.local.exs`
-  or the relevant `apps/*/.dependency_sources.local.exs`. Keep those files
-  untracked.
+- Cross-repository source substitution uses MWO's tuple-first
+  `workspace_dep(committed_tuple)` seam. Committed tuples are standalone Hex defaults;
+  MWO activation substitutes only source coordinates.
+- Machine-local source preferences belong in MWO's XDG operator state. Do not install a
+  repository-local dependency-source helper or override file.
 - Dependency source selection must not read environment variables.
 
 ## Runtime Environment

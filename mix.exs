@@ -1,6 +1,4 @@
-unless Code.ensure_loaded?(DependencySources) do
-  Code.require_file("build_support/dependency_sources.exs", __DIR__)
-end
+if bootstrap = System.get_env("MIX_WORKSPACE_OPS_BOOTSTRAP"), do: Code.require_file(bootstrap)
 
 defmodule Alkahest.Workspace.MixProject do
   use Mix.Project
@@ -127,7 +125,17 @@ defmodule Alkahest.Workspace.MixProject do
   end
 
   defp workspace_package_deps do
-    Enum.map(@workspace_packages, fn {app, _path} -> DependencySources.dep(app, __DIR__) end)
+    [
+      workspace_dep({:alkahest_contracts, "~> 0.1.0"}),
+      workspace_dep({:alkahest_client, "~> 0.1.0"}),
+      workspace_dep({:alkahest_test_support, "~> 0.1.0"})
+    ]
+  end
+
+  defp workspace_dep(committed) do
+    if function_exported?(MixWorkspaceOpsBootstrap, :dep, 2),
+      do: apply(MixWorkspaceOpsBootstrap, :dep, [committed, __DIR__]),
+      else: committed
   end
 
   defp workspace_dialyzer_paths do
